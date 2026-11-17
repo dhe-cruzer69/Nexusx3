@@ -13,7 +13,7 @@ jobs:
   container:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build X4 image
         run: docker build -f x4/Dockerfile -t x4-arsenal:ci .
       - name: Start X4 container
