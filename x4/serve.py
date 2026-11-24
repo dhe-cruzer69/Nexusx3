@@ -5,6 +5,7 @@ import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from .providers import groq, ollama
+from .request_validation import PayloadTooLarge, read_json_body
 from .runtime import PolicyViolation, X4MasterRuntime
 
 runtime = X4MasterRuntime({"ollama": ollama(), "groq": groq()})
@@ -43,15 +44,12 @@ class Handler(BaseHTTPRequestHandler):
             self._json(404, {"error": "not found"})
             return
         try:
-            length = int(self.headers.get("Content-Length", "0"))
-            request = json.loads(self.rfile.read(length) or b"{}")
-            if not isinstance(request.get("prompt"), str) or not request["prompt"].strip():
-                raise ValueError("prompt is required")
+            request = read_json_body(self.headers, self.rfile.read)
             self._json(200, runtime.process(request))
+        except PayloadTooLarge as exc:
+            self._json(413, {"error": str(exc)})
         except PolicyViolation as exc:
             self._json(403, {"error": str(exc)})
-        except json.JSONDecodeError as exc:
-            self._json(400, {"error": str(exc)})
         except ValueError as exc:
             self._json(400, {"error": str(exc)})
         except (KeyError, OSError, RuntimeError, TypeError) as exc:
