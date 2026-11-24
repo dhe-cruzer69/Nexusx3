@@ -58,7 +58,7 @@ def test_rejects_malformed_json() -> None:
 
 
 def test_rejects_non_object_json() -> None:
-    with pytest.raises(ValueError, match="JSON object"):
+    with pytest.raises(TypeError, match="JSON object"):
         parse(b'["hello"]')
 
 
