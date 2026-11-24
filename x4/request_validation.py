@@ -1,9 +1,8 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Callable, Mapping
 from typing import Any
-
-import json
 
 
 MAX_REQUEST_BODY_BYTES = 1_048_576
