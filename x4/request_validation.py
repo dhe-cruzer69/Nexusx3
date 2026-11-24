@@ -41,7 +41,7 @@ def read_json_body(
         raise ValueError("request body must contain valid JSON") from exc
 
     if not isinstance(payload, dict):
-        raise ValueError("request body must be a JSON object")
+        raise TypeError("request body must be a JSON object")
 
     prompt = payload.get("prompt")
     if not isinstance(prompt, str) or not prompt.strip():
